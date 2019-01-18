@@ -51,12 +51,14 @@ RUN cd / \
 
 COPY thekeystore /etc/cas/
 COPY bin/*.* cas-overlay/bin/
+COPY docker-entrypoint.sh cas-overlay
 COPY etc/cas/config/*.* /etc/cas/config/
 COPY etc/cas/services/*.* /etc/cas/services/
 
 RUN chmod -R 750 cas-overlay/bin \
     && chmod 750 cas-overlay/mvnw \
     && chmod 750 cas-overlay/build.sh \
+    && chmod 750 cas-overlay/docker-entrypoint.sh \
     && chmod 750 /opt/jre-home/bin/java;
 
 # Enable if you are using Oracle Java
@@ -71,4 +73,6 @@ ENV PATH $PATH:$JAVA_HOME/bin:.
 
 RUN ./mvnw clean package -T 10
 
-CMD ["/cas-overlay/bin/run-cas.sh"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
+
+CMD ["bin/run-cas.sh"]
